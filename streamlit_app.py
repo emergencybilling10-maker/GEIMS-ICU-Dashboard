@@ -4,7 +4,12 @@ from google.oauth2 import service_account
 import json
 
 # Page Config
-st.set_page_config(page_title="GEIMS ICU Management", layout="wide")
+st.set_page_config(page_title="GEIMS ICU Tracker", layout="wide")
+
+# --- 0. PROFESSIONAL HEADER ---
+st.markdown("<h1 style='text-align: center; color: white;'>Graphic Era Institute of Medical Sciences - GEIMS, Dehradun</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: #ADD8E6;'>Critical Care & ICU Dashboard</h3>", unsafe_allow_html=True)
+st.divider()
 
 # --- 1. SECURE DATABASE CONNECTION ---
 if "textkey" in st.secrets:
@@ -19,94 +24,52 @@ else:
     st.warning("Admin: Please add the Firestore JSON key to Streamlit Secrets.")
     st.stop()
 
-# --- 2. FULL ICU & HDU DATA ---
+# --- 2. SPECIALTY-WISE ICU STRUCTURE ---
+# Organized based on your uploaded images and floor plans
 icu_structure = {
-    "8th Floor - RICU / MICU / SICU": [
-        "B-ICU-20", "B-ICU-17", "B-ICU-18", "MICU-1", "MICU-2", "MICU-3", "MICU-4", "MICU-5", 
-        "SICU-1", "SICU-2", "SICU-3", "SICU-4", "SICU-5", "RICU-1", "RICU-2", "RICU-3", 
-        "RICU-4", "RICU-5", "B-ICU-31", "B-ICU-27"
-    ],
-    "8th Floor - Respiratory ICU": [
-        "ICU-8F-1", "ICU-8F-2", "ICU-8F-3", "ICU-8F-4", "ICU-8F-5", "ICU-8F-6", 
-        "ICU-8F-7", "ICU-8F-8", "ICU-8F-9", "ICU-8F-10"
-    ],
-    "8th Floor - Neuro SICU & HDU": [
-        "N-SICU-1", "N-SICU-2", "N-SICU-3", "N-SICU-4", "N-SICU-5", "N-SICU-6",
-        "N-SICU-7", "N-SICU-8", "N-SICU-9", "N-SICU-10", "N-SICU-11", "N-SICU-12",
-        "N-SICU-13", "N-SICU-14", "N-SICU-15",
-        "GF-Neuro-HDU-1", "GF-Neuro-HDU-2", "GF-Neuro-HDU-3", "GF-Neuro-HDU-4", 
-        "GF-Neuro-HDU-5", "GF-Neuro-HDU-6", "GF-Neuro-HDU-7", "GF-Neuro-HDU-8",
-        "GF-Neuro-HDU-9", "GF-Neuro-HDU-10", "GF-Neuro-HDU-11", "GF-Neuro-HDU-12",
-        "GF-Neuro-HDU-16", "GF-Neuro-HDU-14", "GF-Neuro-HDU-15"
-    ],
-    "6th Floor - Ayushman ICU (PMJAY)": [
-        "PMJAY-1", "PMJAY-2", "PMJAY-3", "PMJAY-4", "PMJAY-5", "PMJAY-6", "PMJAY-7", "PMJAY-8", 
-        "ICU-9", "PMJAY-9", "PMJAY-10", "PMJAY-11", "PMJAY-12", "PMJAY-13", "PMJAY-14", 
-        "PMJAY-15", "PMJAY-16", "PMJAY-17", "PMJAY-18", "PMJAY-19", "PMJAY-20", "PMJAY-21", 
-        "PMJAY-22", "PMJAY-23", "PMJAY-24"
-    ],
-    "4th Floor - CCU / CTVS / SICU 2": [
-        "ccu-121", "B-CCU-1", "B-CCU-2", "B-CCU-3", "B-CCU-4", "B-CCU-5", "B-CCU-6", "B-CCU-7", 
-        "B-CCU-8", "B-CCU-9", "B-CCU-10", "B-CCU-11", "B-CCU-12", "B-CCU-16", "B-CCU-14", "B-CCU-15",
-        "CTVS-1", "CTVS-2", "CTVS-3", "CTVS-4", "CTVS-5", "CTVS-6", "CTVS-7", "CTVS-8", "CTVS-9", "CTVS-10",
-        "CCU-2-1", "CCU-2-2", "CCU-2-3", "CCU-2-4", "CCU-2-5", "CCU-2-6", "CCU-2-7", "CCU-2-8", "CCU-2-9", "CCU-2-10",
-        "SICU-2-1", "SICU-2-2", "SICU-2-3", "SICU-2-4", "SICU-2-5", "SICU-2-6", "SICU-2-7", "SICU-2-8",
-        "Burn-ICU-1", "Burn-ICU-2"
-    ],
-    "3rd Floor - PICU": [
-        "PICU-1", "PICU-2", "PICU-3", "PICU-4", "PICU-5", "PICU-6", "PICU-7"
-    ]
+    "8th Floor - RICU - 8th C": ["B-ICU-20", "B-ICU-17", "B-ICU-18", "MICU-1", "MICU-2", "MICU-3", "MICU-4", "MICU-5", "SICU-1", "SICU-2", "SICU-3", "SICU-4", "SICU-5", "RICU-1", "RICU-2", "RICU-3", "RICU-4", "RICU-5", "B-ICU-31", "B-ICU-27"],
+    "8th Floor - Respiratory ICU (8th E)": ["ICU-8F-1", "ICU-8F-2", "ICU-8F-3", "ICU-8F-4", "ICU-8F-5", "ICU-8F-6", "ICU-8F-7", "ICU-8F-8", "ICU-8F-9", "ICU-8F-10"],
+    "8th Floor - MICU (8th D)": ["MICU-1", "B-HDU-2", "B-HDU-3", "B-HDU-4", "B-HDU-5", "B-HDU-6", "B-HDU-7", "B-HDU-8", "B-HDU-9", "B-HDU-10", "B-HDU-11", "B-HDU-12", "B-HDU-14"],
+    "8th Floor - Neuro SICU (8th F)": ["N-SICU-1", "N-SICU-2", "N-SICU-3", "N-SICU-4", "N-SICU-5", "N-SICU-6", "N-SICU-7", "N-SICU-8", "N-SICU-9", "N-SICU-10", "N-SICU-11", "N-SICU-12", "N-SICU-13", "N-SICU-14", "N-SICU-15"],
+    "8th Floor - Neuro HDU (8th A)": ["GF-Neuro HDU-1", "GF-Neuro HDU-2", "GF-Neuro HDU-3", "GF-Neuro HDU-4", "GF-Neuro HDU-5", "GF-Neuro HDU-6", "GF-Neuro HDU-7", "GF-Neuro HDU-8", "GF-Neuro HDU-9", "GF-Neuro HDU-10", "GF-Neuro HDU-11", "GF-Neuro HDU-12", "GF-Neuro HDU-16", "GF-Neuro HDU-14", "GF-Neuro HDU-15"],
+    "6th Floor - Medicine Ward (2M - 6th B)": ["MW-U2-M-1", "MW-U2-M-2", "MW-U2-M-3", "MW-U2-M-4", "MW-U2-M-5", "MW-U2-M-6", "MW-U3-M-7", "MW-U3-M-8", "MW-U3-M-9", "MW-U3-M-10", "MW-U3-M-11", "MW-U3-M-12", "MW-U3-M-14", "MW-U3-M-15", "MW-U3-M-16", "MW-U3-M-17", "MW-U3-M-18", "MW-U3-M-19", "MW-U3-M-20", "MW-U3-M-21", "MW-U3-M-22", "MW-U3-M-23", "MW-U3-M-24", "MW-U3-M-25", "MW-U4-M-26", "MW-U4-M-27", "MW-U4-M-28", "MW-U4-M-29", "MW-U4-M-30", "MW-U4-M-31"],
+    "6th Floor - Ayushman ICU (6th E)": ["PMJAY-1", "PMJAY-2", "PMJAY-3", "PMJAY-4", "PMJAY-5", "PMJAY-6", "PMJAY-7", "PMJAY-8", "ICU-9", "PMJAY-9", "PMJAY-10", "PMJAY-11", "PMJAY-12", "PMJAY-13", "PMJAY-14", "PMJAY-15", "PMJAY-16", "PMJAY-17", "PMJAY-18", "PMJAY-19", "PMJAY-20", "PMJAY-21", "PMJAY-22", "PMJAY-23", "PMJAY-24"],
+    "4th Floor - Surgical ICU 2 (4th F)": ["SICU 2-7", "SICU 2-8", "SICU 2-1", "SICU 2-2", "SICU 2-3", "SICU 2-4", "SICU 2-5", "SICU 2-6", "Burn ICU-1", "Burn ICU-2"],
+    "4th Floor - CCU-1": ["ccu-121", "B-CCU-1", "B-CCU-2", "B-CCU-3", "B-CCU-4", "B-CCU-5", "B-CCU-6", "B-CCU-7", "B-CCU-8", "B-CCU-9", "B-CCU-10", "B-CCU-11", "B-CCU-12", "B-CCU-16", "B-CCU-14", "B-CCU-15"],
+    "4th Floor - CTVS & CCU-2": ["CTVS-1", "CTVS-2", "CTVS-3", "CTVS-4", "CTVS-5", "CTVS-6", "CTVS-7", "CTVS-8", "CTVS-9", "CTVS-10", "CCU-2-1", "CCU-2-2", "CCU-2-3", "CCU-2-4", "CCU-2-5", "CCU-2-6", "CCU-2-7", "CCU-2-8", "CCU-2-9", "CCU-2-10"],
+    "Ground Floor - PICU": ["PICU-7", "PICU-1", "PICU-2", "PICU-3", "PICU-4", "PICU-5", "PICU-6"]
 }
 
 # --- 3. ADMIN PANEL ---
 with st.sidebar:
-    st.header("🔐 ICU Master Control")
-    pwd = st.text_input("Enter Admin Password", type="password")
+    st.header("🔐 ICU Admin Portal")
+    pwd = st.text_input("Admin Password", type="password")
     is_admin = (pwd == "Geims248001")
-    
     if is_admin:
-        st.success("Access Granted")
-        all_beds = [b for w in icu_structure.values() for b in w]
-        sel_bed = st.selectbox("Select ICU Bed", sorted(all_beds))
-        # Updated statuses: Added SHIFTING and BOOKED
+        all_ids = [b for w in icu_structure.values() for b in w]
+        sel_bed = st.selectbox("Select ICU Bed", sorted(all_ids))
         new_stat = st.selectbox("Status", ["VACANT", "OCCUPIED", "BOOKED", "SHIFTING", "VENTILATOR ON", "CRITICAL", "TO DISCHARGE", "MAINTENANCE"])
-        p_name = st.text_input("Patient Name (leave blank to clear)")
-        
-        if st.button("Update ICU Record"):
-            db.collection("icu_beds").document(sel_bed).set({
-                "status": new_stat, 
-                "patient": p_name
-            })
-            st.success(f"Updated {sel_bed}")
+        p_name = st.text_input("Patient Name")
+        if st.button("Update ICU Status"):
+            db.collection("icu_beds").document(sel_bed).set({"status": new_stat, "patient": p_name})
             st.rerun()
-    else:
-        st.info("View-Only Mode")
 
-# --- 4. DASHBOARD DISPLAY ---
+# --- 4. DASHBOARD ---
 docs = db.collection("icu_beds").stream()
 live_data = {doc.id: doc.to_dict() for doc in docs}
-
-# Colors matching your previous professional layout
 status_colors = {
     "VACANT": "#FFFFFF", "OCCUPIED": "#000000", "BOOKED": "#90EE90", 
     "SHIFTING": "#FFA500", "VENTILATOR ON": "#1E90FF", "CRITICAL": "#B22222", 
     "TO DISCHARGE": "#ADD8E6", "MAINTENANCE": "#E0E0E0"
 }
 
-st.title("🚑 GEIMS ICU & Specialized Units Live Status")
 for unit, beds in icu_structure.items():
     st.subheader(unit)
-    cols = st.columns(5)
+    cols = st.columns(6) # Slightly more columns for ICU layout
     for i, bed in enumerate(beds):
         data = live_data.get(bed, {"status": "VACANT", "patient": ""})
         bg = status_colors.get(data['status'], "#FFFFFF")
         txt = "white" if data['status'] in ["OCCUPIED", "CRITICAL", "VENTILATOR ON"] else "black"
-        
-        with cols[i % 5]:
-            st.markdown(f"""
-                <div style="background-color:{bg}; color:{txt}; padding:10px; border:2px solid #444; border-radius:8px; text-align:center; height:110px; margin-bottom:15px;">
-                    <div style="font-size:12px; font-weight:bold;">{bed}</div>
-                    <div style="font-size:10px;">{data['status']}</div>
-                    <div style="font-size:11px; font-style:italic;">{data['patient']}</div>
-                </div>
-            """, unsafe_allow_html=True)
+        with cols[i % 6]:
+            st.markdown(f'<div style="background-color:{bg}; color:{txt}; padding:10px; border:1px solid #ccc; border-radius:5px; text-align:center; height:110px; margin-bottom:10px;"><div style="font-size:11px; font-weight:bold;">{bed}</div><div style="font-size:10px;">{data["status"]}</div><div style="font-size:10px; font-style:italic;">{data["patient"]}</div></div>', unsafe_allow_html=True)
+    st.divider()
