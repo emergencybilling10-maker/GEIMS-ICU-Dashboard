@@ -24,15 +24,18 @@ else:
     st.warning("Admin: Please add the Firestore JSON key to Streamlit Secrets.")
     st.stop()
 
-# --- 2. SPECIALTY-WISE ICU STRUCTURE ---
-# Organized based on your uploaded images and floor plans
+# --- 2. SPECIALTY-WISE ICU STRUCTURE (FIXED) ---
 icu_structure = {
     "8th Floor - RICU - 8th C": ["B-ICU-20", "B-ICU-17", "B-ICU-18", "MICU-1", "MICU-2", "MICU-3", "MICU-4", "MICU-5", "SICU-1", "SICU-2", "SICU-3", "SICU-4", "SICU-5", "RICU-1", "RICU-2", "RICU-3", "RICU-4", "RICU-5", "B-ICU-31", "B-ICU-27"],
     "8th Floor - Respiratory ICU (8th E)": ["ICU-8F-1", "ICU-8F-2", "ICU-8F-3", "ICU-8F-4", "ICU-8F-5", "ICU-8F-6", "ICU-8F-7", "ICU-8F-8", "ICU-8F-9", "ICU-8F-10"],
     "8th Floor - MICU (8th D)": ["MICU-1", "B-HDU-2", "B-HDU-3", "B-HDU-4", "B-HDU-5", "B-HDU-6", "B-HDU-7", "B-HDU-8", "B-HDU-9", "B-HDU-10", "B-HDU-11", "B-HDU-12", "B-HDU-14"],
     "8th Floor - Neuro SICU (8th F)": ["N-SICU-1", "N-SICU-2", "N-SICU-3", "N-SICU-4", "N-SICU-5", "N-SICU-6", "N-SICU-7", "N-SICU-8", "N-SICU-9", "N-SICU-10", "N-SICU-11", "N-SICU-12", "N-SICU-13", "N-SICU-14", "N-SICU-15"],
     "8th Floor - Neuro HDU (8th A)": ["GF-Neuro HDU-1", "GF-Neuro HDU-2", "GF-Neuro HDU-3", "GF-Neuro HDU-4", "GF-Neuro HDU-5", "GF-Neuro HDU-6", "GF-Neuro HDU-7", "GF-Neuro HDU-8", "GF-Neuro HDU-9", "GF-Neuro HDU-10", "GF-Neuro HDU-11", "GF-Neuro HDU-12", "GF-Neuro HDU-16", "GF-Neuro HDU-14", "GF-Neuro HDU-15"],
-    "6th Floor - Medicine Ward (2M - 6th B)": ["MW-U2-M-1", "MW-U2-M-2", "MW-U2-M-3", "MW-U2-M-4", "MW-U2-M-5", "MW-U2-M-6", "MW-U3-M-7", "MW-U3-M-8", "MW-U3-M-9", "MW-U3-M-10", "MW-U3-M-11", "MW-U3-M-12", "MW-U3-M-14", "MW-U3-M-15", "MW-U3-M-16", "MW-U3-M-17", "MW-U3-M-18", "MW-U3-M-19", "MW-U3-M-20", "MW-U3-M-21", "MW-U3-M-22", "MW-U3-M-23", "MW-U3-M-24", "MW-U3-M-25", "MW-U4-M-26", "MW-U4-M-27", "MW-U4-M-28", "MW-U4-M-29", "MW-U4-M-30", "MW-U4-M-31"],
+    "6th Floor - Medicine HDU (6th B)": [
+        "HDU-1", "HDU-2", "HDU-3", "HDU-4", "HDU-5", "HDU-6", "HDU-7", "HDU-8", "HDU-9", "HDU-10",
+        "HDU-11", "HDU-12", "HDU-14", "HDU-15", "HDU-16", "HDU-17", "HDU-18", "HDU-19", "HDU-20",
+        "HDU-21", "HDU-22", "HDU-23", "HDU-24", "HDU-25", "HDU-26", "HDU-27", "HDU-28", "HDU-29", "HDU-30", "HDU-31"
+    ],
     "6th Floor - Ayushman ICU (6th E)": ["PMJAY-1", "PMJAY-2", "PMJAY-3", "PMJAY-4", "PMJAY-5", "PMJAY-6", "PMJAY-7", "PMJAY-8", "ICU-9", "PMJAY-9", "PMJAY-10", "PMJAY-11", "PMJAY-12", "PMJAY-13", "PMJAY-14", "PMJAY-15", "PMJAY-16", "PMJAY-17", "PMJAY-18", "PMJAY-19", "PMJAY-20", "PMJAY-21", "PMJAY-22", "PMJAY-23", "PMJAY-24"],
     "4th Floor - Surgical ICU 2 (4th F)": ["SICU 2-7", "SICU 2-8", "SICU 2-1", "SICU 2-2", "SICU 2-3", "SICU 2-4", "SICU 2-5", "SICU 2-6", "Burn ICU-1", "Burn ICU-2"],
     "4th Floor - CCU-1": ["ccu-121", "B-CCU-1", "B-CCU-2", "B-CCU-3", "B-CCU-4", "B-CCU-5", "B-CCU-6", "B-CCU-7", "B-CCU-8", "B-CCU-9", "B-CCU-10", "B-CCU-11", "B-CCU-12", "B-CCU-16", "B-CCU-14", "B-CCU-15"],
@@ -47,11 +50,12 @@ with st.sidebar:
     is_admin = (pwd == "Geims248001")
     if is_admin:
         all_ids = [b for w in icu_structure.values() for b in w]
-        sel_bed = st.selectbox("Select ICU Bed", sorted(all_ids))
+        sel_bed = st.selectbox("Select ICU/HDU Bed", sorted(list(set(all_ids))))
         new_stat = st.selectbox("Status", ["VACANT", "OCCUPIED", "BOOKED", "SHIFTING", "VENTILATOR ON", "CRITICAL", "TO DISCHARGE", "MAINTENANCE"])
         p_name = st.text_input("Patient Name")
-        if st.button("Update ICU Status"):
+        if st.button("Update Status Permanently"):
             db.collection("icu_beds").document(sel_bed).set({"status": new_stat, "patient": p_name})
+            st.success(f"Updated {sel_bed}")
             st.rerun()
 
 # --- 4. DASHBOARD ---
@@ -65,7 +69,7 @@ status_colors = {
 
 for unit, beds in icu_structure.items():
     st.subheader(unit)
-    cols = st.columns(6) # Slightly more columns for ICU layout
+    cols = st.columns(6)
     for i, bed in enumerate(beds):
         data = live_data.get(bed, {"status": "VACANT", "patient": ""})
         bg = status_colors.get(data['status'], "#FFFFFF")
