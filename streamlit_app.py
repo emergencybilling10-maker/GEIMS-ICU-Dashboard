@@ -28,7 +28,7 @@ else:
 icu_structure = {
     "8th Floor - RICU - 8th C": ["B-ICU-20", "B-ICU-17", "B-ICU-18", "MICU-1", "MICU-2", "MICU-3", "MICU-4", "MICU-5", "SICU-1", "SICU-2", "SICU-3", "SICU-4", "SICU-5", "RICU-1", "RICU-2", "RICU-3", "RICU-4", "RICU-5", "B-ICU-31", "B-ICU-27"],
     "8th Floor - Respiratory ICU (8th E)": ["ICU-8F-1", "ICU-8F-2", "ICU-8F-3", "ICU-8F-4", "ICU-8F-5", "ICU-8F-6", "ICU-8F-7", "ICU-8F-8", "ICU-8F-9", "ICU-8F-10"],
-    "8th Floor - MICU (8th D)": ["MICU-1", "B-HDU-2", "B-HDU-3", "B-HDU-4", "B-HDU-5", "B-HDU-6", "B-HDU-7", "B-HDU-8", "B-HDU-9", "B-HDU-10", "B-HDU-11", "B-HDU-12", "B-HDU-14"],
+    "8th Floor - MICU (8th D)": ["MICU-1", "MICU-2", "MICU-3", "MICU-4", "MICU-5", "MICU-6", "MICU-7", "MICU-8", "MICU-9", "MICU-10", "MICU-11", "MICU-12", "MICU-14"],
     "8th Floor - Neuro SICU (8th F)": ["N-SICU-1", "N-SICU-2", "N-SICU-3", "N-SICU-4", "N-SICU-5", "N-SICU-6", "N-SICU-7", "N-SICU-8", "N-SICU-9", "N-SICU-10", "N-SICU-11", "N-SICU-12", "N-SICU-13", "N-SICU-14", "N-SICU-15"],
     "8th Floor - Neuro HDU (8th A)": ["GF-Neuro HDU-1", "GF-Neuro HDU-2", "GF-Neuro HDU-3", "GF-Neuro HDU-4", "GF-Neuro HDU-5", "GF-Neuro HDU-6", "GF-Neuro HDU-7", "GF-Neuro HDU-8", "GF-Neuro HDU-9", "GF-Neuro HDU-10", "GF-Neuro HDU-11", "GF-Neuro HDU-12", "GF-Neuro HDU-16", "GF-Neuro HDU-14", "GF-Neuro HDU-15"],
     "6th Floor - Medicine HDU (6th B)": [
